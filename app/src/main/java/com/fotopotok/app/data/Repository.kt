@@ -15,7 +15,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class Repository(rawBaseUrl: String) {
+class Repository(rawBaseUrl: String, private val userName: String) {
 
     private val baseUrl = if (rawBaseUrl.endsWith("/")) rawBaseUrl else "$rawBaseUrl/"
 
@@ -23,6 +23,12 @@ class Repository(rawBaseUrl: String) {
 
     private val http = OkHttpClient.Builder()
         .addInterceptor(logging)
+        .addInterceptor { chain ->
+            val req = chain.request().newBuilder()
+                .header("X-User-Name", userName)
+                .build()
+            chain.proceed(req)
+        }
         .connectTimeout(30, TimeUnit.SECONDS)
         .readTimeout(180, TimeUnit.SECONDS)
         .build()

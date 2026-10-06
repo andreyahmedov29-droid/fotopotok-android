@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fotopotok.app.api.Photo
 import com.fotopotok.app.databinding.ActivityMainBinding
+import com.fotopotok.app.data.ServerPrefs
 import com.fotopotok.app.ui.MainViewModel
 import com.fotopotok.app.ui.PhotoAdapter
 import com.fotopotok.app.util.UpdateManager
@@ -199,15 +200,29 @@ class MainActivity : AppCompatActivity() {
 
     // ---------- Server & chat ----------
     private fun showServerDialog() {
-        val input = EditText(this)
-        input.hint = "https://app-….vibecode.bitrix24.tech"
-        input.setText(viewModel.state.value.serverUrl)
+        val container = LinearLayout(this)
+        container.orientation = LinearLayout.VERTICAL
         val pad = (16 * resources.displayMetrics.density).toInt()
-        input.setPadding(pad, pad, pad, pad)
+
+        val nameInput = EditText(this)
+        nameInput.hint = "Ваше имя (показывается у фото)"
+        nameInput.setText(ServerPrefs.userName(this))
+        nameInput.setPadding(pad, pad, pad, pad)
+
+        val urlInput = EditText(this)
+        urlInput.hint = "https://ваш-публичный-сервер"
+        urlInput.setText(viewModel.state.value.serverUrl)
+        urlInput.setPadding(pad, pad, pad, pad)
+
+        container.addView(nameInput)
+        container.addView(urlInput)
         MaterialAlertDialogBuilder(this)
             .setTitle("Адрес сервера")
-            .setView(input)
-            .setPositiveButton("Сохранить") { _, _ -> viewModel.setServerUrl(input.text.toString()) }
+            .setView(container)
+            .setPositiveButton("Сохранить") { _, _ ->
+                viewModel.setUserName(nameInput.text.toString())
+                viewModel.setServerUrl(urlInput.text.toString())
+            }
             .setNegativeButton("Отмена", null)
             .show()
     }

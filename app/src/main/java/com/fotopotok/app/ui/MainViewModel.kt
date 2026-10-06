@@ -40,7 +40,11 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     private fun repoOrNull(): Repository? {
         val url = _state.value.serverUrl
-        return if (url.isNotBlank()) Repository(url) else null
+        return if (url.isNotBlank()) Repository(url, ServerPrefs.userName(getApplication())) else null
+    }
+
+    fun setUserName(name: String) {
+        ServerPrefs.saveUserName(getApplication(), name)
     }
 
     fun setServerUrl(url: String) {
