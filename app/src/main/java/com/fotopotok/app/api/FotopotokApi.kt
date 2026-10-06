@@ -19,8 +19,8 @@ interface FotopotokApi {
     @POST("api/photos/{id}/send")
     suspend fun send(@Path("id") id: String): OkResponse
 
-    @POST("api/photos/send-image")
-    suspend fun sendImage(@Body body: SendImageBody): OkResponse
+    @POST("api/photos/send-bundle")
+    suspend fun sendBundle(@Body body: SendBundleBody): OkResponse
 
     @DELETE("api/photos/{id}")
     suspend fun delete(@Path("id") id: String): OkResponse

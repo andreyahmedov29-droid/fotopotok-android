@@ -7,12 +7,10 @@ import com.fotopotok.app.api.FotopotokApi
 import com.fotopotok.app.api.Photo
 import com.fotopotok.app.api.PhotoUploadBody
 import com.fotopotok.app.api.PhotosResponse
-import com.fotopotok.app.api.SendImageBody
+import com.fotopotok.app.api.SendBundleBody
 import com.fotopotok.app.api.UploadResponse
-import java.io.IOException
 import java.util.concurrent.TimeUnit
 import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -43,8 +41,8 @@ class Repository(rawBaseUrl: String) {
     suspend fun upload(dataUrl: String): UploadResponse = api.upload(PhotoUploadBody(dataUrl))
     suspend fun like(id: String) { api.like(id) }
     suspend fun send(id: String) { api.send(id) }
-    suspend fun sendImage(dataUrl: String, filename: String) {
-        api.sendImage(SendImageBody(dataUrl, filename))
+    suspend fun sendBundle(ids: List<String>) {
+        api.sendBundle(SendBundleBody(ids))
     }
     suspend fun delete(id: String) { api.delete(id) }
     suspend fun setChat(chat: Chat?) {
@@ -53,16 +51,4 @@ class Repository(rawBaseUrl: String) {
 
     fun imageUrl(photo: Photo): String? =
         photo.url?.let { baseUrl + it.removePrefix("/") }
-
-    suspend fun imageBytes(photo: Photo): ByteArray? {
-        val url = imageUrl(photo) ?: return null
-        return try {
-            val req = Request.Builder().url(url).build()
-            http.newCall(req).execute().use { resp ->
-                if (resp.isSuccessful) resp.body?.bytes() else null
-            }
-        } catch (e: IOException) {
-            null
-        }
-    }
 }

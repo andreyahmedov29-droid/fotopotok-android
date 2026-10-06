@@ -57,10 +57,7 @@ data class ChatBody(
     @SerializedName("title") val title: String?
 )
 
-data class SendImageBody(
-    @SerializedName("dataUrl") val dataUrl: String,
-    @SerializedName("filename") val filename: String
-)
+data class SendBundleBody(@SerializedName("ids") val ids: List<String>)
 
 data class ConfigSendResponse(
     @SerializedName("ok") val ok: Boolean?,
