@@ -35,3 +35,17 @@ jobs:
           name: fotopotok-apk
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+
+      # Publish the built APK as a GitHub Release ("build-<versionCode>") so the
+      # app can auto-update: it reads the latest release and offers to install it.
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION_CODE=$(sed -n 's/.*versionCode = \([0-9]*\).*/\1/p' app/build.gradle.kts | head -1)
+          TAG="build-${VERSION_CODE}"
+          gh release delete "$TAG" --yes --cleanup-tag 2>/dev/null || true
+          gh release create "$TAG" app/build/outputs/apk/debug/app-debug.apk \
+            --title "Фотопоток ${TAG}" \
+            --notes "Автосборка из GitHub Actions. Пакетная отправка фото — одним ZIP-сообщением." \
+            --latest

@@ -24,6 +24,7 @@ import com.fotopotok.app.api.Photo
 import com.fotopotok.app.databinding.ActivityMainBinding
 import com.fotopotok.app.ui.MainViewModel
 import com.fotopotok.app.ui.PhotoAdapter
+import com.fotopotok.app.util.UpdateManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
 import kotlinx.coroutines.Dispatchers
@@ -63,6 +64,28 @@ class MainActivity : AppCompatActivity() {
         setupFab()
         setupBatchBar()
         observe()
+        checkForUpdate()
+    }
+
+    private fun checkForUpdate() {
+        lifecycleScope.launch {
+            val info = withContext(Dispatchers.IO) { UpdateManager.fetch() }
+            val installed = UpdateManager.installedBuild(this@MainActivity)
+            if (info == null || info.latestBuild <= installed) return@launch
+            MaterialAlertDialogBuilder(this@MainActivity)
+                .setTitle("Доступно обновление (сборка ${info.latestBuild})")
+                .setMessage("Установить новую версию приложения?")
+                .setPositiveButton("Обновить") { _, _ ->
+                    lifecycleScope.launch {
+                        val ok = withContext(Dispatchers.IO) {
+                            UpdateManager.downloadAndInstall(this@MainActivity, info.apkUrl)
+                        }
+                        if (!ok) toast("Не удалось скачать обновление")
+                    }
+                }
+                .setNegativeButton("Позже", null)
+                .show()
+        }
     }
 
     private fun setupRecycler() {
