@@ -100,7 +100,8 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             try {
                 _state.update { it.copy(message = "Загружаю фото и собираю архив…") }
-                val group = "g" + System.currentTimeMillis().toString(16) + Math.random().toString(16).substring(2, 7)
+                val group = "g" + java.lang.Long.toHexString(System.currentTimeMillis()) +
+                    java.lang.Integer.toHexString((Math.random() * 0xFFFF).toInt())
                 val ids = mutableListOf<String>()
                 for (dataUrl in dataUrls) {
                     val res = repo.upload(dataUrl, sendToChat = false, group = group, groupTitle = name)
