@@ -24,13 +24,27 @@ android {
         buildConfigField("String", "DEFAULT_API_BASE_URL", "\"https://app-1a4df5ab7ae2.vibecode.bitrix24.tech\"")
     }
 
+    // A single, committed signing key so every build (CI and local) has the same
+    // signature and updates install over the previous version. Personal sideload
+    // only — do not reuse this key for Play Store publishing.
+    signingConfigs {
+        create("fotopotok") {
+            storeFile = file("../fotopotok-release.keystore")
+            storePassword = "fotopotok2026"
+            keyAlias = "fotopotok"
+            keyPassword = "fotopotok2026"
+        }
+    }
+
     buildTypes {
         debug {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("fotopotok")
         }
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("fotopotok")
         }
     }
 
@@ -41,6 +55,7 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+
     buildFeatures {
         viewBinding = true
         buildConfig = true
