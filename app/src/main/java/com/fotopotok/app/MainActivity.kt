@@ -19,7 +19,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.fotopotok.app.api.Chat
 import com.fotopotok.app.api.Photo
 import com.fotopotok.app.databinding.ActivityMainBinding
 import com.fotopotok.app.ui.MainViewModel
@@ -112,7 +111,6 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.action_select -> { toggleSelectMode(); true }
                 R.id.action_settings -> { showServerDialog(); true }
-                R.id.action_chat -> { showChatDialog(); true }
                 else -> false
             }
         }
@@ -211,20 +209,6 @@ class MainActivity : AppCompatActivity() {
             .setView(input)
             .setPositiveButton("Сохранить") { _, _ -> viewModel.setServerUrl(input.text.toString()) }
             .setNegativeButton("Отмена", null)
-            .show()
-    }
-
-    private fun showChatDialog() {
-        val chats = viewModel.state.value.chats
-        if (chats.isEmpty()) { toast("Список чатов пуст — проверьте сервер"); return }
-        val titles = arrayOf("— не отправлять —") + chats.map { it.title }.toTypedArray()
-        MaterialAlertDialogBuilder(this)
-            .setTitle(getString(R.string.action_chat))
-            .setItems(titles) { _, which ->
-                val chat: Chat? = if (which == 0) null else chats[which - 1]
-                viewModel.setChat(chat)
-                toast(if (chat == null) "Автодубль выключен" else "Чат: ${chat.title}")
-            }
             .show()
     }
 
