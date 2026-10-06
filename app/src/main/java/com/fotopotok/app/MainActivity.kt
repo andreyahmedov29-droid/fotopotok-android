@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -47,9 +48,9 @@ class MainActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.TakePicture()) { ok ->
             if (ok) cameraUri?.let { uploadFromUri(it) }
         }
-    private val pickImage =
-        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            uri?.let { uploadFromUri(it) }
+    private val pickMultiple =
+        registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
+            if (uris.isNotEmpty()) handleBatchImages(uris)
         }
     private val cameraPerm =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -139,14 +140,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupFab() {
         binding.fabUpload.setOnClickListener {
-            val items = arrayOf(getString(R.string.camera), getString(R.string.gallery))
+            val items = arrayOf(getString(R.string.camera), "Галерея (несколько)")
             MaterialAlertDialogBuilder(this)
                 .setTitle(getString(R.string.choose_source))
                 .setItems(items) { _, which ->
-                    if (which == 0) launchCamera() else pickImage.launch("image/*")
+                    if (which == 0) launchCamera() else launchMultiGallery()
                 }
                 .show()
         }
+    }
+
+    private fun launchMultiGallery() {
+        pickMultiple.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
     private fun setupBatchBar() {
@@ -276,6 +281,46 @@ class MainActivity : AppCompatActivity() {
                 toast("Не удалось прочитать фото")
             }
         }
+    }
+
+    private fun handleBatchImages(uris: List<Uri>) {
+        lifecycleScope.launch {
+            val dataUrls = withContext(Dispatchers.IO) {
+                uris.mapNotNull { uriToDataUrl(it) }
+            }
+            if (dataUrls.isEmpty()) { toast("Не удалось прочитать фото"); return@launch }
+            if (dataUrls.size == 1) { viewModel.upload(dataUrls[0]); return@launch }
+            showNameDialog { name -> viewModel.sendBatchAsArchive(dataUrls, name) }
+        }
+    }
+
+    private fun uriToDataUrl(uri: Uri): String? {
+        return try {
+            val bytes = contentResolver.openInputStream(uri)?.use { it.readBytes() } ?: return null
+            if (bytes.isEmpty() || bytes.size > 8 * 1024 * 1024) null
+            else {
+                val mime = contentResolver.getType(uri) ?: "image/jpeg"
+                "data:$mime;base64," + android.util.Base64.encodeToString(bytes, android.util.Base64.NO_WRAP)
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun showNameDialog(onOk: (String) -> Unit) {
+        val input = EditText(this)
+        val today = java.text.SimpleDateFormat("dd.MM.yy", java.util.Locale.getDefault())
+            .format(java.util.Date())
+        input.hint = "Название архива и фото"
+        input.setText("Фотопоток_$today")
+        val pad = (16 * resources.displayMetrics.density).toInt()
+        input.setPadding(pad, pad, pad, pad)
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Название архива")
+            .setView(input)
+            .setPositiveButton("Отправить архивом") { _, _ -> onOk(input.text.toString()) }
+            .setNegativeButton("Отмена", null)
+            .show()
     }
 
     private fun toast(msg: String) {

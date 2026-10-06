@@ -41,7 +41,12 @@ data class ConfigResponse(
     @SerializedName("meta") val meta: ConfigMeta?
 )
 
-data class PhotoUploadBody(@SerializedName("dataUrl") val dataUrl: String)
+data class PhotoUploadBody(
+    @SerializedName("dataUrl") val dataUrl: String,
+    @SerializedName("sendToChat") val sendToChat: Boolean? = null,
+    @SerializedName("group") val group: String? = null,
+    @SerializedName("groupTitle") val groupTitle: String? = null
+)
 data class UploadResponse(@SerializedName("id") val id: String?)
 
 data class LikeResponse(
@@ -57,7 +62,10 @@ data class ChatBody(
     @SerializedName("title") val title: String?
 )
 
-data class SendBundleBody(@SerializedName("ids") val ids: List<String>)
+data class SendBundleBody(
+    @SerializedName("ids") val ids: List<String>,
+    @SerializedName("name") val name: String? = null
+)
 
 data class ConfigSendResponse(
     @SerializedName("ok") val ok: Boolean?,

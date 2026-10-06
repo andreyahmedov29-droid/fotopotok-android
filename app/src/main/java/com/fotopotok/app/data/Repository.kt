@@ -44,11 +44,16 @@ class Repository(rawBaseUrl: String, private val userName: String) {
 
     suspend fun photos(): PhotosResponse = api.photos()
     suspend fun config(): ConfigResponse = api.config()
-    suspend fun upload(dataUrl: String): UploadResponse = api.upload(PhotoUploadBody(dataUrl))
+    suspend fun upload(
+        dataUrl: String,
+        sendToChat: Boolean? = null,
+        group: String? = null,
+        groupTitle: String? = null
+    ): UploadResponse = api.upload(PhotoUploadBody(dataUrl, sendToChat, group, groupTitle))
     suspend fun like(id: String) { api.like(id) }
     suspend fun send(id: String) { api.send(id) }
-    suspend fun sendBundle(ids: List<String>) {
-        api.sendBundle(SendBundleBody(ids))
+    suspend fun sendBundle(ids: List<String>, name: String? = null) {
+        api.sendBundle(SendBundleBody(ids, name))
     }
     suspend fun delete(id: String) { api.delete(id) }
     suspend fun setChat(chat: Chat?) {

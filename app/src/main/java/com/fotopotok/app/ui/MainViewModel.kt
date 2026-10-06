@@ -93,6 +93,32 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
+    // Upload a whole batch and send it to the default chat as ONE ZIP archive with the
+    // given name (the server appends the date and a per-day counter to the name).
+    fun sendBatchAsArchive(dataUrls: List<String>, name: String) {
+        val repo = repoOrNull() ?: return
+        viewModelScope.launch {
+            try {
+                _state.update { it.copy(message = "Загружаю фото и собираю архив…") }
+                val group = "g" + System.currentTimeMillis().toString(16) + Math.random().toString(16).substring(2, 7)
+                val ids = mutableListOf<String>()
+                for (dataUrl in dataUrls) {
+                    val res = repo.upload(dataUrl, sendToChat = false, group = group, groupTitle = name)
+                    res.id?.let { ids.add(it) }
+                }
+                if (ids.isEmpty()) {
+                    _state.update { it.copy(message = "Не удалось загрузить фото") }
+                    return@launch
+                }
+                _state.update { it.copy(message = "Отправляю архив…") }
+                repo.sendBundle(ids, name)
+                refreshAll()
+            } catch (e: Exception) {
+                _state.update { it.copy(message = friendly(e)) }
+            }
+        }
+    }
+
     fun like(photo: Photo) {
         val repo = repoOrNull() ?: return
         viewModelScope.launch {
