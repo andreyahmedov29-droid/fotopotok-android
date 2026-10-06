@@ -6,6 +6,10 @@
         android:title="@string/action_select"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/action_check"
+        android:title="@string/action_check"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_settings"
         android:title="@string/action_settings"
         app:showAsAction="never" />

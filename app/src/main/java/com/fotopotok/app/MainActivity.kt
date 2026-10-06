@@ -76,11 +76,17 @@ class MainActivity : AppCompatActivity() {
         const val UPDATE_CHECK_INTERVAL_MS = 120_000L
     }
 
-    private fun checkForUpdate() {
+    private fun checkForUpdate(manual: Boolean = false) {
         lifecycleScope.launch {
             val info = withContext(Dispatchers.IO) { UpdateManager.fetch() }
             val installed = UpdateManager.installedBuild(this@MainActivity)
-            if (info == null || info.latestBuild <= installed || info.latestBuild <= lastOfferedBuild) return@launch
+            if (manual) lastOfferedBuild = 0
+            if (info == null || info.latestBuild <= installed || info.latestBuild <= lastOfferedBuild) {
+                if (manual) {
+                    toast(if (info == null) "Не удалось проверить обновление" else "Установлена актуальная версия")
+                }
+                return@launch
+            }
             lastOfferedBuild = info.latestBuild
             MaterialAlertDialogBuilder(this@MainActivity)
                 .setTitle("Доступно обновление (сборка ${info.latestBuild})")
@@ -133,6 +139,7 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.action_select -> { toggleSelectMode(); true }
                 R.id.action_settings -> { showServerDialog(); true }
+                R.id.action_check -> { checkForUpdate(true); true }
                 else -> false
             }
         }

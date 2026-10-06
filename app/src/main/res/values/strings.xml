@@ -5,6 +5,7 @@
     <string name="offline_banner">Сервер не настроен или недоступен. Нажмите «Настройки», чтобы указать адрес.</string>
     <string name="action_settings">Настройки</string>
     <string name="action_select">Выбрать</string>
+    <string name="action_check">Проверить обновление</string>
     <string name="action_chat">Чат для дубля</string>
     <string name="action_send_selected">Отправить выбранные в чат</string>
     <string name="action_done">Готово</string>
