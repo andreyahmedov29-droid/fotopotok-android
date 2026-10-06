@@ -17,7 +17,7 @@ android {
         // The server address for the photo feed / chat. Leave empty to open the
         // app in "set up server" mode on first launch (the address can be entered
         // in the app and is stored on the device).
-        buildConfigField("String", "DEFAULT_API_BASE_URL", "\"\"")
+        buildConfigField("String", "DEFAULT_API_BASE_URL", "\"https://app-1a4df5ab7ae2.vibecode.bitrix24.tech\"")
     }
 
     buildTypes {

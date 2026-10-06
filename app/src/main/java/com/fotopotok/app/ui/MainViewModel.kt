@@ -3,6 +3,7 @@ package com.fotopotok.app.ui
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.fotopotok.app.BuildConfig
 import com.fotopotok.app.api.Chat
 import com.fotopotok.app.api.Photo
 import com.fotopotok.app.data.Repository
@@ -27,7 +28,8 @@ data class UiState(
 )
 
 class MainViewModel(app: Application) : AndroidViewModel(app) {
-    private val _state = MutableStateFlow(UiState(serverUrl = ServerPrefs.serverUrl(app)))
+    private val initialUrl = ServerPrefs.serverUrl(app).ifEmpty { BuildConfig.DEFAULT_API_BASE_URL }
+    private val _state = MutableStateFlow(UiState(serverUrl = initialUrl))
     val state: StateFlow<UiState> = _state.asStateFlow()
 
     init {
