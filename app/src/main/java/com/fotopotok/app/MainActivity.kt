@@ -309,10 +309,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun showNameDialog(onOk: (String) -> Unit) {
         val input = EditText(this)
-        val today = java.text.SimpleDateFormat("dd.MM.yy", java.util.Locale.getDefault())
-            .format(java.util.Date())
-        input.hint = "Название архива и фото"
-        input.setText("Фотопоток_$today")
+        input.hint = "Название архива и файла (дата добавится сама)"
+        input.setText("Фотопоток")
         val pad = (16 * resources.displayMetrics.density).toInt()
         input.setPadding(pad, pad, pad, pad)
         MaterialAlertDialogBuilder(this)
