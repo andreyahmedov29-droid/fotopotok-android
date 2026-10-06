@@ -165,9 +165,7 @@
                 android:textColor="@color/amber"
                 android:textSize="11sp"
                 app:backgroundTint="#15130F"
-                app:cornerRadius="18dp"
-                app:insetTop="2dp"
-                app:insetBottom="2dp" />
+                app:cornerRadius="18dp" />
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
