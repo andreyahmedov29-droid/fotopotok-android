@@ -28,6 +28,8 @@ import com.fotopotok.app.util.UpdateManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -39,6 +41,7 @@ class MainActivity : AppCompatActivity() {
     private var selectMode = false
     private val selected = LinkedHashSet<String>()
     private var lastMsg: String? = null
+    private var lastOfferedBuild = 0
 
     private val takePicture =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { ok ->
@@ -65,13 +68,19 @@ class MainActivity : AppCompatActivity() {
         setupBatchBar()
         observe()
         checkForUpdate()
+        startUpdateWatcher()
+    }
+
+    private companion object {
+        const val UPDATE_CHECK_INTERVAL_MS = 120_000L
     }
 
     private fun checkForUpdate() {
         lifecycleScope.launch {
             val info = withContext(Dispatchers.IO) { UpdateManager.fetch() }
             val installed = UpdateManager.installedBuild(this@MainActivity)
-            if (info == null || info.latestBuild <= installed) return@launch
+            if (info == null || info.latestBuild <= installed || info.latestBuild <= lastOfferedBuild) return@launch
+            lastOfferedBuild = info.latestBuild
             MaterialAlertDialogBuilder(this@MainActivity)
                 .setTitle("Доступно обновление (сборка ${info.latestBuild})")
                 .setMessage("Установить новую версию приложения?")
@@ -85,6 +94,17 @@ class MainActivity : AppCompatActivity() {
                 }
                 .setNegativeButton("Позже", null)
                 .show()
+        }
+    }
+
+    // While the app is open, keep looking for a newer release so the update prompt
+    // appears shortly after a new version is pushed (not only on a fresh launch).
+    private fun startUpdateWatcher() {
+        lifecycleScope.launch {
+            while (isActive) {
+                delay(UPDATE_CHECK_INTERVAL_MS)
+                checkForUpdate()
+            }
         }
     }
 
