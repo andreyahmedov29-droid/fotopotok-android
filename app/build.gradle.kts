@@ -11,7 +11,11 @@ android {
         applicationId = "com.fotopotok.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 2
+        // CI passes a strictly increasing number (workflow run count); fall back to a
+        // static value for local builds. The app's auto-update compares this against
+        // the latest GitHub release, so it must go UP on every published build.
+        val buildCode = project.findProperty("vdVersionCode") as String?
+        versionCode = buildCode?.toIntOrNull() ?: 2
         versionName = "1.0.1"
 
         // The server address for the photo feed / chat. Leave empty to open the
