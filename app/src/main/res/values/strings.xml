@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Фотопоток</string>
+    <string name="no_photos">Пока пусто. Загрузите первое фото кнопкой «+».</string>
+    <string name="offline_banner">Сервер не настроен или недоступен. Нажмите «Настройки», чтобы указать адрес.</string>
+    <string name="action_settings">Настройки</string>
+    <string name="action_select">Выбрать</string>
+    <string name="action_chat">Чат для дубля</string>
+    <string name="action_send_selected">Отправить выбранные в чат</string>
+    <string name="action_done">Готово</string>
+    <string name="upload_photo">Добавить фото</string>
+    <string name="chat_send_status_none">не отправлялось</string>
+    <string name="chat_send_status_pending">отправляется…</string>
+    <string name="chat_send_status_sent">отправлено в чат</string>
+    <string name="chat_send_status_failed">ошибка отправки</string>
+    <string name="chat_send_status_nochat">чат не выбран</string>
+    <string name="like">Отметить обработанным</string>
+    <string name="choose_source">Источник фото</string>
+    <string name="camera">Камера</string>
+    <string name="gallery">Галерея</string>
+</resources>

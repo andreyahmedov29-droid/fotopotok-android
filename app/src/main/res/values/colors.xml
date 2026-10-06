@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="amber">#E8A33D</color>
+    <color name="amber_dark">#B9681F</color>
+    <color name="ink">#0D0C0A</color>
+    <color name="card">#1A1712</color>
+    <color name="good">#5FBF72</color>
+    <color name="danger">#E2655A</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="ic_launcher_background">#0D0C0A</color>
+</resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Fotopotok" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/amber</item>
+        <item name="colorOnPrimary">@color/ink</item>
+        <item name="colorSecondary">@color/amber_dark</item>
+        <item name="android:statusBarColor">@color/ink</item>
+        <item name="android:windowBackground">@color/ink</item>
+        <item name="colorSurface">@color/card</item>
+    </style>
+</resources>
