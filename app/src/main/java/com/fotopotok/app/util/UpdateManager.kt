@@ -35,18 +35,20 @@ object UpdateManager {
     }
 
     /** Returns the latest release info, or null when unreachable / malformed. */
-    fun fetch(): UpdateInfo? = try {
-        val json = getJson(LATEST_URL)
-        val tag = json.optString("tag_name", "")
-        val latestBuild = Regex("build-(\\d+)").find(tag)?.groupValues?.get(1)?.toIntOrNull()
-            ?: return null
-        val assets = json.optJSONArray("assets")
-        val apkUrl = if (assets != null && assets.length() > 0) {
-            assets.getJSONObject(0).optString("browser_download_url", "")
-        } else return null
-        if (apkUrl.isBlank()) null else UpdateInfo(latestBuild, apkUrl)
-    } catch (e: Exception) {
-        null
+    fun fetch(): UpdateInfo? {
+        return try {
+            val json = getJson(LATEST_URL)
+            val tag = json.optString("tag_name", "")
+            val latestBuild = Regex("build-(\\d+)").find(tag)?.groupValues?.get(1)?.toIntOrNull()
+                ?: return null
+            val assets = json.optJSONArray("assets")
+            val apkUrl = if (assets != null && assets.length() > 0) {
+                assets.getJSONObject(0).optString("browser_download_url", "")
+            } else return null
+            if (apkUrl.isBlank()) null else UpdateInfo(latestBuild, apkUrl)
+        } catch (e: Exception) {
+            null
+        }
     }
 
     fun installedBuild(context: Context): Int =
