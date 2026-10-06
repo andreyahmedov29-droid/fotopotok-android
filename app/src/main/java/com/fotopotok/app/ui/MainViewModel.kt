@@ -131,7 +131,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    private fun buildCollage(repo: Repository, photos: List<Photo>): ByteArray? {
+    private suspend fun buildCollage(repo: Repository, photos: List<Photo>): ByteArray? {
         val bitmaps = mutableListOf<Bitmap>()
         for (ph in photos) {
             val bytes = repo.imageBytes(ph) ?: continue
