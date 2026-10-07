@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -63,6 +64,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setupCrashReporting()
 
         binding.barTitle.text = getString(R.string.app_name)
         // Show the installed build number in the header so we can always tell
@@ -78,6 +80,24 @@ class MainActivity : AppCompatActivity() {
         observe()
         checkForUpdate()
         startUpdateWatcher()
+    }
+
+    private fun setupCrashReporting() {
+        Thread.setDefaultUncaughtExceptionHandler { _, throwable ->
+            try {
+                File(cacheDir, "crash.txt").writeText(Log.getStackTraceString(throwable))
+            } catch (ignored: Throwable) { /* best effort */ }
+        }
+        val f = File(cacheDir, "crash.txt")
+        if (f.exists()) {
+            val msg = f.readText().take(500)
+            f.delete()
+            MaterialAlertDialogBuilder(this)
+                .setTitle("Прошлый сбой приложения")
+                .setMessage(msg)
+                .setPositiveButton("ОК", null)
+                .show()
+        }
     }
 
     private companion object {
