@@ -62,13 +62,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
+
+        binding.barTitle.text = getString(R.string.app_name)
         // Show the installed build number in the header so we can always tell
         // whether the latest version is actually installed.
-        binding.toolbar.subtitle = "сборка ${UpdateManager.installedBuild(this)}"
+        binding.barSub.text = "сборка ${UpdateManager.installedBuild(this)}"
+        binding.btnCheckUpdate.setOnClickListener { checkForUpdate(true) }
+        binding.btnSettings.setOnClickListener { showServerDialog() }
+        binding.btnSelectMode.setOnClickListener { toggleSelectMode() }
 
         setupRecycler()
-        setupToolbar()
         setupFab()
         setupBatchBar()
         observe()
@@ -143,18 +146,6 @@ class MainActivity : AppCompatActivity() {
         binding.rvPhotos.adapter = adapter
     }
 
-    private fun setupToolbar() {
-        binding.toolbar.inflateMenu(R.menu.menu_main)
-        binding.toolbar.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.action_select -> { toggleSelectMode(); true }
-                R.id.action_settings -> { showServerDialog(); true }
-                R.id.action_check -> { checkForUpdate(true); true }
-                else -> false
-            }
-        }
-    }
-
     private fun setupFab() {
         binding.fabUpload.setOnClickListener {
             val items = arrayOf(getString(R.string.camera), "Галерея (несколько)")
@@ -218,7 +209,7 @@ class MainActivity : AppCompatActivity() {
         adapter.selected = selected
         adapter.submitList(buildTiles(viewModel.state.value.photos, selectMode))
         val title = getString(if (selectMode) R.string.action_done else R.string.action_select)
-        binding.toolbar.menu.findItem(R.id.action_select)?.title = title
+        binding.btnSelectMode.text = title
     }
 
     private fun toggleSelect(id: String) {
