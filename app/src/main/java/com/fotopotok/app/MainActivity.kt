@@ -217,7 +217,6 @@ class MainActivity : AppCompatActivity() {
                     adapter.selectMode = selectMode
                     adapter.selected = selected
 
-                    binding.offlineBanner.visibility = if (s.online) View.GONE else View.VISIBLE
                     binding.emptyView.visibility =
                         if (s.online && s.photos.isEmpty()) View.VISIBLE else View.GONE
 

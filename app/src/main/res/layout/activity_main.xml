@@ -87,20 +87,6 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <TextView
-            android:id="@+id/offlineBanner"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="#33291A"
-            android:padding="12dp"
-            android:text="@string/offline_banner"
-            android:textColor="@color/amber"
-            android:textSize="13sp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
             android:id="@+id/emptyView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -125,7 +111,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/offlineBanner" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/batchBar"
