@@ -84,7 +84,10 @@ class MainActivity : AppCompatActivity() {
             if (manual) lastOfferedBuild = 0
             if (info == null || info.latestBuild <= installed || info.latestBuild <= lastOfferedBuild) {
                 if (manual) {
-                    toast(if (info == null) "Не удалось проверить обновление" else "Установлена актуальная версия")
+                    toast(
+                        if (info == null) "Не удалось проверить обновление"
+                        else "Вы на сборке $installed, последняя доступная — build ${info.latestBuild}"
+                    )
                 }
                 return@launch
             }
