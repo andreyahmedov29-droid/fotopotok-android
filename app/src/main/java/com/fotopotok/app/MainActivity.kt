@@ -105,10 +105,16 @@ class MainActivity : AppCompatActivity() {
                 .setMessage("Установить новую версию приложения?")
                 .setPositiveButton("Обновить") { _, _ ->
                     lifecycleScope.launch {
+                        val loading = MaterialAlertDialogBuilder(this@MainActivity)
+                            .setTitle("Обновление")
+                            .setMessage("Скачиваю новую версию…")
+                            .setCancelable(false)
+                            .show()
                         val ok = withContext(Dispatchers.IO) {
                             UpdateManager.downloadAndInstall(this@MainActivity, info.apkUrl)
                         }
-                        if (!ok) toast("Не удалось скачать обновление")
+                        loading.dismiss()
+                        if (!ok) toast("Не удалось скачать или открыть обновление")
                     }
                 }
                 .setNegativeButton("Позже", null)
