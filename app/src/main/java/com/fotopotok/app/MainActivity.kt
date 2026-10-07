@@ -134,7 +134,9 @@ class MainActivity : AppCompatActivity() {
             onSelect = { toggleSelect(it.id) },
             onGroupLike = { viewModel.groupLike(it) }
         )
-        binding.rvPhotos.layoutManager = GridLayoutManager(this, 3)
+        // 2 columns instead of 3 so group cards are wide enough on a phone and
+        // titles / buttons do not get truncated or wrapped.
+        binding.rvPhotos.layoutManager = GridLayoutManager(this, 2)
         binding.rvPhotos.adapter = adapter
     }
 

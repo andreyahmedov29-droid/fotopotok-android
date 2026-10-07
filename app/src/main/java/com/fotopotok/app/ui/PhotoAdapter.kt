@@ -124,7 +124,7 @@ class PhotoAdapter(
         b.groupCount.text = "$total фото в пачке"
 
         val allDone = photos.all { it.likeCount > 0 }
-        b.btnGroupLike.text = if (allDone) "✓ Пачка обработана" else "Отметить пачку обработанной"
+        b.btnGroupLike.text = if (allDone) "✓ Пачка обработана" else "Отметить пачку"
         b.btnGroupLike.setTextColor(if (allDone) ctx.getColor(R.color.good) else Color.parseColor("#A99F8D"))
         b.btnGroupLike.setOnClickListener {
             first.group?.let { onGroupLike(it) }
