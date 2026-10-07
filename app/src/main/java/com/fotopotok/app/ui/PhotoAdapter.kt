@@ -21,6 +21,7 @@ class PhotoAdapter(
     private val onLike: (Photo) -> Unit,
     private val onSend: (Photo) -> Unit,
     private val onDelete: (Photo) -> Unit,
+    private val onGroupDelete: (List<Photo>) -> Unit,
     private val onSelect: (Photo) -> Unit,
     private val onGroupLike: (String) -> Unit
 ) : ListAdapter<FeedItem, RecyclerView.ViewHolder>(DIFF) {
@@ -103,6 +104,9 @@ class PhotoAdapter(
         val ctx = holder.itemView.context
         val first = photos.first()
         val total = photos.size
+        val isOwn = meId != null && first.authorId == meId
+        b.btnGroupDelete.visibility = if (isOwn && !selectMode) View.VISIBLE else View.GONE
+        b.btnGroupDelete.setOnClickListener { onGroupDelete(photos) }
 
         val thumbs = listOf(b.groupThumb1, b.groupThumb2, b.groupThumb3)
         for (i in thumbs.indices) {

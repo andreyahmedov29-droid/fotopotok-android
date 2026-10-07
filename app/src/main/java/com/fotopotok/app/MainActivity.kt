@@ -137,6 +137,13 @@ class MainActivity : AppCompatActivity() {
                     .setNegativeButton("Отмена", null)
                     .show()
             },
+            onGroupDelete = { photos ->
+                MaterialAlertDialogBuilder(this)
+                    .setTitle("Удалить пачку из ${photos.size} фото?")
+                    .setPositiveButton("Удалить") { _, _ -> viewModel.deleteMany(photos.map { it.id }) }
+                    .setNegativeButton("Отмена", null)
+                    .show()
+            },
             onSelect = { toggleSelect(it.id) },
             onGroupLike = { viewModel.groupLike(it) }
         )

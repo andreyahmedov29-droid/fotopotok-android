@@ -182,6 +182,18 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
+    fun deleteMany(ids: List<String>) {
+        val repo = repoOrNull() ?: return
+        viewModelScope.launch {
+            try {
+                for (id in ids) repo.delete(id)
+                refreshAll()
+            } catch (e: Exception) {
+                _state.update { it.copy(message = friendly(e)) }
+            }
+        }
+    }
+
     fun setChat(chat: Chat?) {
         val repo = repoOrNull() ?: return
         viewModelScope.launch {

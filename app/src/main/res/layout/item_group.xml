@@ -81,6 +81,19 @@
                 android:textSize="11sp"
                 android:textStyle="bold"
                 android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/btnGroupDelete"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="top|end"
+                android:layout_margin="6dp"
+                android:background="@drawable/bg_circle_dim"
+                android:gravity="center"
+                android:text="×"
+                android:textColor="#A99F8D"
+                android:textSize="17sp"
+                android:visibility="gone" />
         </FrameLayout>
 
         <TextView
