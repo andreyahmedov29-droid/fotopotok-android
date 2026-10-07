@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.fotopotok.app.api.Photo
 import com.fotopotok.app.databinding.ActivityMainBinding
 import com.fotopotok.app.data.ServerPrefs
+import com.fotopotok.app.BuildConfig
 import com.fotopotok.app.ui.MainViewModel
 import com.fotopotok.app.ui.PhotoAdapter
 import com.fotopotok.app.util.UpdateManager
@@ -85,7 +86,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkForUpdate(manual: Boolean = false) {
         lifecycleScope.launch {
-            val info = withContext(Dispatchers.IO) { UpdateManager.fetch() }
+            val base = viewModel.state.value.serverUrl.ifBlank { BuildConfig.DEFAULT_API_BASE_URL }
+            val info = withContext(Dispatchers.IO) { UpdateManager.fetch(base) }
             val installed = UpdateManager.installedBuild(this@MainActivity)
             if (manual) lastOfferedBuild = 0
             if (info == null || info.latestBuild <= installed || info.latestBuild <= lastOfferedBuild) {
