@@ -18,7 +18,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class Repository(rawBaseUrl: String, private val userName: String) {
 
-    private val baseUrl = if (rawBaseUrl.endsWith("/")) rawBaseUrl else "$rawBaseUrl/"
+    private val baseUrl = run {
+        var u = rawBaseUrl.trim()
+        if (u.isEmpty()) u = "https://localhost/"
+        if (!u.startsWith("http://") && !u.startsWith("https://")) u = "https://$u"
+        if (u.endsWith("/")) u else "$u/"
+    }
 
     private val logging = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
 

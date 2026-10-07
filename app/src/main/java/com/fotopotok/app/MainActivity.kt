@@ -262,8 +262,12 @@ class MainActivity : AppCompatActivity() {
             .setTitle("Адрес сервера")
             .setView(container)
             .setPositiveButton("Сохранить") { _, _ ->
-                viewModel.setUserName(nameInput.text.toString())
-                viewModel.setServerUrl(urlInput.text.toString())
+                try {
+                    viewModel.setUserName(nameInput.text.toString())
+                    viewModel.setServerUrl(urlInput.text.toString())
+                } catch (t: Throwable) {
+                    toast("Ошибка сохранения настроек")
+                }
             }
             .setNegativeButton("Отмена", null)
             .show()
