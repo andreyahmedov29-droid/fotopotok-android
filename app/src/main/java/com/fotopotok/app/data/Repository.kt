@@ -30,8 +30,11 @@ class Repository(rawBaseUrl: String, private val userName: String) {
     private val http = OkHttpClient.Builder()
         .addInterceptor(logging)
         .addInterceptor { chain ->
+            // HTTP headers must be ASCII; encode the display name (Cyrillic etc.)
+            // as percent-encoded UTF-8 — the server decodes it back.
+            val encoded = java.net.URLEncoder.encode(userName, "UTF-8").replace("+", "%20")
             val req = chain.request().newBuilder()
-                .header("X-User-Name", userName)
+                .header("X-User-Name", encoded)
                 .build()
             chain.proceed(req)
         }
