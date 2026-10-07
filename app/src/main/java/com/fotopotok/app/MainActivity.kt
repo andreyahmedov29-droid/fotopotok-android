@@ -63,6 +63,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
+        // Show the installed build number in the header so we can always tell
+        // whether the latest version is actually installed.
+        binding.toolbar.subtitle = "сборка ${UpdateManager.installedBuild(this)}"
 
         setupRecycler()
         setupToolbar()
