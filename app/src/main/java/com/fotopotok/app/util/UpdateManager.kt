@@ -84,22 +84,41 @@ object UpdateManager {
         context.packageManager.getPackageInfo(context.packageName, 0).versionCode
 
     /** Downloads the APK into the cache and launches the system installer. */
-    fun downloadAndInstall(context: Context, url: String): Boolean = try {
-        val conn = URL(url).openConnection() as HttpURLConnection
-        conn.connect()
-        val dir = File(context.cacheDir, "update").apply { mkdirs() }
-        val file = File(dir, "fotopotok-update.apk")
-        conn.inputStream.use { input -> file.outputStream().use { output -> input.copyTo(output) } }
+    fun downloadAndInstall(context: Context, url: String): Boolean {
+        return try {
+            val conn = URL(url).openConnection() as HttpURLConnection
+            conn.instanceFollowRedirects = true
+            conn.setRequestProperty("User-Agent", "Fotopotok")
+            conn.connectTimeout = 20_000
+            conn.readTimeout = 120_000
+            conn.connect()
+            if (conn.responseCode !in 200..299) {
+                conn.disconnect()
+                return false
+            }
+            val dir = File(context.cacheDir, "update").apply { mkdirs() }
+            val file = File(dir, "fotopotok-update.apk")
+            conn.inputStream.use { input -> file.outputStream().use { output -> input.copyTo(output) } }
+            conn.disconnect()
 
-        val uri = FileProvider.getUriForFile(context, context.packageName + ".fileprovider", file)
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            setDataAndType(uri, "application/vnd.android.package-archive")
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            // Sanity check: an APK is a ZIP and starts with "PK".
+            val magicOk = file.length() > 1_000_000 && file.inputStream().use { input ->
+                val h = ByteArray(2)
+                val n = input.read(h)
+                n == 2 && h[0] == 'P'.code.toByte() && h[1] == 'K'.code.toByte()
+            }
+            if (!magicOk) return false
+
+            val uri = FileProvider.getUriForFile(context, context.packageName + ".fileprovider", file)
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(uri, "application/vnd.android.package-archive")
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+            true
+        } catch (e: Exception) {
+            false
         }
-        context.startActivity(intent)
-        true
-    } catch (e: Exception) {
-        false
     }
 }

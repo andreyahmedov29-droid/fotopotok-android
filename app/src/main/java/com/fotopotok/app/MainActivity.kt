@@ -134,7 +134,7 @@ class MainActivity : AppCompatActivity() {
                             UpdateManager.downloadAndInstall(this@MainActivity, info.apkUrl)
                         }
                         loading.dismiss()
-                        if (!ok) toast("Не удалось скачать или открыть обновление")
+                        if (!ok) toast("Не удалось скачать или открыть обновление. Проверьте подключение и повторите.")
                     }
                 }
                 .setNegativeButton("Позже", null)
