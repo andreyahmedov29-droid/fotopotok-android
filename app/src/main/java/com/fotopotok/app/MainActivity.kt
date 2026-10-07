@@ -327,7 +327,6 @@ class MainActivity : AppCompatActivity() {
     private fun showNameDialog(onOk: (String) -> Unit) {
         val input = EditText(this)
         input.hint = "Название архива и файла (дата добавится сама)"
-        input.setText("Фотопоток")
         val pad = (16 * resources.displayMetrics.density).toInt()
         input.setPadding(pad, pad, pad, pad)
         MaterialAlertDialogBuilder(this)
