@@ -43,23 +43,25 @@ object UpdateManager {
         return githubLatest()
     }
 
-    private fun serverVersion(base: String?): UpdateInfo? = try {
-        if (base.isNullOrBlank()) return null
-        val root = if (base.endsWith("/")) base else "$base/"
-        val conn = URL(root + "api/version").openConnection() as HttpURLConnection
-        conn.connectTimeout = 15_000
-        conn.readTimeout = 15_000
-        val json = if (conn.responseCode == 200) {
-            JSONObject(conn.inputStream.bufferedReader().readText())
-        } else null
-        conn.disconnect()
-        json?.let {
-            val b = it.optInt("latestBuild", 0)
-            val u = it.optString("apkUrl", "")
-            if (b > 0 && u.isNotBlank()) UpdateInfo(b, u) else null
+    private fun serverVersion(base: String?): UpdateInfo? {
+        return try {
+            if (base.isNullOrBlank()) return null
+            val root = if (base.endsWith("/")) base else "$base/"
+            val conn = URL(root + "api/version").openConnection() as HttpURLConnection
+            conn.connectTimeout = 15_000
+            conn.readTimeout = 15_000
+            val json = if (conn.responseCode == 200) {
+                JSONObject(conn.inputStream.bufferedReader().readText())
+            } else null
+            conn.disconnect()
+            json?.let {
+                val b = it.optInt("latestBuild", 0)
+                val u = it.optString("apkUrl", "")
+                if (b > 0 && u.isNotBlank()) UpdateInfo(b, u) else null
+            }
+        } catch (e: Exception) {
+            null
         }
-    } catch (e: Exception) {
-        null
     }
 
     private fun githubLatest(): UpdateInfo? {
