@@ -132,6 +132,18 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
+    fun groupLike(group: String) {
+        val repo = repoOrNull() ?: return
+        viewModelScope.launch {
+            try {
+                repo.likeGroup(group)
+                refreshAll()
+            } catch (e: Exception) {
+                _state.update { it.copy(message = friendly(e)) }
+            }
+        }
+    }
+
     fun sendPhotos(ids: List<String>) {
         val repo = repoOrNull() ?: return
         viewModelScope.launch {

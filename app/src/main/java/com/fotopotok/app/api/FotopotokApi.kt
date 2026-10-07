@@ -22,6 +22,9 @@ interface FotopotokApi {
     @POST("api/photos/send-bundle")
     suspend fun sendBundle(@Body body: SendBundleBody): OkResponse
 
+    @POST("api/photos/like-group")
+    suspend fun likeGroup(@Body body: GroupLikeBody): OkResponse
+
     @DELETE("api/photos/{id}")
     suspend fun delete(@Path("id") id: String): OkResponse
 

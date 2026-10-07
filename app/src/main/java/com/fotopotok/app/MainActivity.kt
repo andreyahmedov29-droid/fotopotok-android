@@ -26,6 +26,7 @@ import com.fotopotok.app.data.ServerPrefs
 import com.fotopotok.app.ui.MainViewModel
 import com.fotopotok.app.ui.PhotoAdapter
 import com.fotopotok.app.util.UpdateManager
+import com.fotopotok.app.ui.buildTiles
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
 import kotlinx.coroutines.Dispatchers
@@ -127,7 +128,8 @@ class MainActivity : AppCompatActivity() {
                     .setNegativeButton("Отмена", null)
                     .show()
             },
-            onSelect = { toggleSelect(it.id) }
+            onSelect = { toggleSelect(it.id) },
+            onGroupLike = { viewModel.groupLike(it) }
         )
         binding.rvPhotos.layoutManager = GridLayoutManager(this, 3)
         binding.rvPhotos.adapter = adapter
@@ -176,7 +178,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.state.collect { s ->
-                    adapter.submitList(s.photos)
+                    adapter.submitList(buildTiles(s.photos, selectMode))
                     adapter.meId = s.meId
                     adapter.selectMode = selectMode
                     adapter.selected = selected
@@ -206,7 +208,7 @@ class MainActivity : AppCompatActivity() {
         updateSelectionUi()
         adapter.selectMode = selectMode
         adapter.selected = selected
-        adapter.notifyDataSetChanged()
+        adapter.submitList(buildTiles(viewModel.state.value.photos, selectMode))
         val title = getString(if (selectMode) R.string.action_done else R.string.action_select)
         binding.toolbar.menu.findItem(R.id.action_select)?.title = title
     }

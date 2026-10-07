@@ -13,6 +13,8 @@ data class Photo(
     @SerializedName("authorName") val authorName: String,
     @SerializedName("caption") val caption: String?,
     @SerializedName("createdAt") val createdAt: Long,
+    @SerializedName("group") val group: String? = null,
+    @SerializedName("groupTitle") val groupTitle: String? = null,
     @SerializedName("likeCount") val likeCount: Int,
     @SerializedName("likedByMe") val likedByMe: Boolean,
     @SerializedName("chatStatus") val chatStatus: String?,
@@ -65,6 +67,10 @@ data class ChatBody(
 data class SendBundleBody(
     @SerializedName("ids") val ids: List<String>,
     @SerializedName("name") val name: String? = null
+)
+
+data class GroupLikeBody(
+    @SerializedName("group") val group: String
 )
 
 data class ConfigSendResponse(
